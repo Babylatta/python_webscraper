@@ -7,7 +7,7 @@ results = []
 def extract_wanted_jobs(keyword):
     p = sync_playwright().start()
 
-    browser = p.chromium.launch(headless=True)
+    browser = p.chromium.launch(headless=False)
 
     page = browser.new_page()
 
@@ -38,14 +38,13 @@ def extract_wanted_jobs(keyword):
 
     content = page.content()
     
-
     p.stop()
 
     soup = BeautifulSoup(content, "html.parser")
+
     jobs = soup.find_all("div", class_="JobCard_container__FqChn")
 
-    
-    
+
     for job in jobs:
         link = f"https://www.wanted.co.kr{job.find('a')['href']}"
         position = job.find("strong", class_="JobCard_title__ddkwM").text
@@ -57,8 +56,10 @@ def extract_wanted_jobs(keyword):
             "location":location,
             "link":link,
         }
-       
         results.append(job_data)
     
+
+
     return results
+
 
